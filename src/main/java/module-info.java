@@ -6,10 +6,10 @@ module qilletni.docgen {
     requires org.slf4j;
     requires unbescape;
     requires msgpack.core;
-    requires flexmark.util.data;
+    requires com.google.gson;
     requires flexmark;
     requires flexmark.util.ast;
-    requires com.google.gson;
+    requires flexmark.util.data;
 
     exports dev.qilletni.docgen;
 }
