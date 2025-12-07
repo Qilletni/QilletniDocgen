@@ -268,13 +268,14 @@ public class DocumentationDeserializer implements AutoCloseable {
     }
     
     public BasicQllData deserializeBasicQllData() throws IOException {
+        var scope = unpacker.unpackString();
         var name = unpacker.unpackString();
         var version = unpacker.unpackString();
         var author = unpacker.unpackString();
         var description = unpacker.unpackString();
         var sourceUrl = unpacker.unpackString();
         
-        return new BasicQllData(name, version, author, description, sourceUrl);
+        return new BasicQllData(scope, name, version, author, description, sourceUrl);
     }
 
     @Override

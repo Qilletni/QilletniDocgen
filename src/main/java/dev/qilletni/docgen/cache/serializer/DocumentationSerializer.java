@@ -227,6 +227,7 @@ public class DocumentationSerializer implements AutoCloseable {
     }
     
     public void serializeBasicQllData(BasicQllData basicQllData) throws IOException {
+        packer.packString(basicQllData.scope());
         packer.packString(basicQllData.name());
         packer.packString(basicQllData.version());
         packer.packString(basicQllData.author());

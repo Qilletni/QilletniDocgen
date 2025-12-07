@@ -4,6 +4,7 @@ import dev.qilletni.api.lang.docs.structure.DocumentedItem;
 import dev.qilletni.api.lang.docs.structure.item.DocumentedTypeFunction;
 import dev.qilletni.api.lang.docs.structure.text.inner.FunctionDoc;
 import dev.qilletni.api.lib.qll.QilletniInfoData;
+import dev.qilletni.api.lib.qll.QllInfo;
 import dev.qilletni.docgen.cache.BasicQllData;
 import dev.qilletni.docgen.pages.GlobalIndexPageGenerator;
 import dev.qilletni.docgen.pages.dialects.function.FunctionSignatureAttributeTagProcessor;
@@ -44,7 +45,7 @@ public class DocGenerator {
      * @param inputPath   The qilletni-src directory of the Qilletni project being documented
      * @param libraryQll  The library to generate documentation for
      */
-    public void generateDocs(Path inputPath, QilletniInfoData libraryQll) throws IOException {
+    public void generateDocs(Path inputPath, QllInfo libraryQll) throws IOException {
         initializeDirectory();
         
         LOGGER.info("Generating docs for library: {}", libraryQll.name());
