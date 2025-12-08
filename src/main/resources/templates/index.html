@@ -7,6 +7,14 @@
     <title>Qilletni Docs - All Libraries</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script>
+    (function() {
+        var theme = localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
+
     <!-- Materialize CSS -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
@@ -86,5 +94,7 @@
     <!-- Footer -->
     <div th:replace="~{templates/fragments/footer :: footer}"></div>
 </div>
+
+<script src="/scripts/theme.js"></script>
 </body>
 </html>

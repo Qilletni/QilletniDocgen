@@ -4,7 +4,7 @@
 <body>
 
 <th:block th:fragment="navBar(libraryName, enableSearch)">
-    <nav class="teal">
+    <nav class="nav-primary">
         <div class="nav-wrapper">
             <a href="/" class="brand-logo" style="margin-left: 1rem;">Qilletni Docs</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
@@ -25,6 +25,11 @@
                 </li>
                 <li th:if="${libraryName != null}">
                     <a link:indexPage="${'/library/' + libraryName + '/'}" th:text="${libraryName}">
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="toggleTheme(); return false;" class="theme-toggle">
+                        <i id="theme-icon" class="material-icons">dark_mode</i>
                     </a>
                 </li>
             </ul>

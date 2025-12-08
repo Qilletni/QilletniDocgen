@@ -5,7 +5,7 @@
 
 <div th:fragment="functionCard(documentedFunction)" class="card function-doc hoverable">
     <!-- Card header / signature -->
-    <div class="card-content teal lighten-4 function-signature"
+    <div class="card-content function-signature"
          function:anchor="${documentedFunction.itemBeingDocumented()}">
         <span class="code" function:signature="${documentedFunction.itemBeingDocumented()}"></span>
         <a class="function-anchor right"
@@ -16,7 +16,10 @@
 
     <!-- Card body -->
     <div class="card-content function-innerdoc">
-        <p formatteddoc:desc="${documentedFunction.innerDoc().description()}"></p>
+        <th:block th:with="desc=${documentedFunction.innerDoc().description()}, hasDesc=${desc != null && !desc.descriptionItems().isEmpty()}">
+            <p th:if="${hasDesc}" formatteddoc:desc="${desc}"></p>
+            <p th:unless="${hasDesc}" style="color: var(--color-text-muted); font-style: italic;">&lt;No description provided&gt;</p>
+        </th:block>
 
         <!-- Params -->
         <div th:if="${!documentedFunction.innerDoc().paramDocs().isEmpty()}"

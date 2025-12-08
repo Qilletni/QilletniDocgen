@@ -6,6 +6,15 @@
 <head>
     <title>Qilletni Docs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" th:content="${library.description()}">
+
+    <script>
+    (function() {
+        var theme = localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
 
     <!-- Materialize CSS -->
     <link rel="stylesheet"
@@ -48,7 +57,7 @@
         <!-- Library Sections Row -->
         <div class="row library-sections">
             <!-- Entities Section -->
-            <div class="card l-box library-category">
+            <div class="card l-box library-category" th:if="${not #lists.isEmpty(entityDocs)}">
                 <div class="card-content">
                     <h3 class="content-subhead">Entities</h3>
                     <div class="category-list">
@@ -68,7 +77,7 @@
             </div>
 
             <!-- Global Functions Section -->
-            <div class="card l-box library-category">
+            <div class="card l-box library-category" th:if="${not #lists.isEmpty(functionDocs)}">
                 <div class="card-content">
                     <h3 class="content-subhead">Global Functions</h3>
                     <div class="category-list">
@@ -87,38 +96,8 @@
                 </div>
             </div>
 
-
-            <!-- Import Aliases Section -->
-            <!--                <div class="card l-box library-category">-->
-            <!--                    <div class="card-content">-->
-            <!--                        <h3 class="content-subhead">Import Aliases</h3>-->
-            <!--                        <div class="category-list">-->
-            <!--                            <table class="highlight responsive-table">-->
-            <!--                                <tbody>-->
-            <!--                                <tr>-->
-            <!--                                    <td><a href="#">spotify</a></td>-->
-            <!--                                    <td>This is a description for spotify.</td>-->
-            <!--                                </tr>-->
-            <!--                                <tr>-->
-            <!--                                    <td><a href="#">spotify.builder</a></td>-->
-            <!--                                    <td>This is a description for spotify.builder.</td>-->
-            <!--                                </tr>-->
-            <!--                                <tr>-->
-            <!--                                    <td><a href="#">spotify.friends</a></td>-->
-            <!--                                    <td>This is a description for spotify.friends.</td>-->
-            <!--                                </tr>-->
-            <!--                                <tr>-->
-            <!--                                    <td><a href="#">audio</a></td>-->
-            <!--                                    <td>This is a description for audio.</td>-->
-            <!--                                </tr>-->
-            <!--                                </tbody>-->
-            <!--                            </table>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-
             <!-- Extension Functions Section -->
-            <div class="card l-box library-category">
+            <div class="card l-box library-category" th:if="${not #lists.isEmpty(onExtensionDocs)}">
                 <div class="card-content">
                     <h3 class="content-subhead">Extension Functions</h3>
                     <div class="category-list">
@@ -139,7 +118,7 @@
         </div>
 
         <!-- Function Definitions -->
-        <div class="row function-definitions">
+        <div class="row function-definitions" th:if="${not #lists.isEmpty(functionDocs) or not #lists.isEmpty(onExtensionDocs)}">
             <div class="col s12">
                 <div th:each="documentedFunction : ${functionDocs}">
                     <div th:replace="~{templates/fragments/function_card :: functionCard(${documentedFunction})}"></div>
@@ -156,6 +135,7 @@
 <!-- Materialize JS -->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" crossorigin="anonymous"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.31/dist/flexsearch.bundle.min.js"></script>
+<script src="/scripts/theme.js"></script>
 <script src="/scripts/search.js"></script>
 
 <script th:inline="javascript">

@@ -5,8 +5,16 @@
       xmlns:formatteddoc="http://www.w3.org/1999/xhtml"
       xmlns:constructor="http://www.w3.org/1999/xhtml" xmlns:field="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Qilletni Docs</title>
+    <title th:text="${name} + ' - ' + ${libraryName} + ' - Qilletni Docs'">Qilletni Docs</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+    (function() {
+        var theme = localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+    </script>
 
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -107,7 +115,7 @@
                 <div class="card function-doc hoverable"
                      th:each="documentedConstructor : ${constructors}">
                     <!-- Card header (constructor signature and anchor) -->
-                    <div class="card-content teal lighten-4 function-signature"
+                    <div class="card-content function-signature"
                          constructor:anchor="${documentedConstructor.itemBeingDocumented()}">
                         <span class="code" constructor:signature="${documentedConstructor.itemBeingDocumented()}"></span>
                         <a class="function-anchor right"
@@ -153,10 +161,9 @@
             <div class="col s12">
                 <h4>Functions</h4>
 
-                <div class="card function-doc hoverable"
-                     th:each="documentedFunction : ${functions}">
+                <th:block th:each="documentedFunction : ${functions}">
                     <div th:replace="~{templates/fragments/function_card :: functionCard(${documentedFunction})}"></div>
-                </div>
+                </th:block>
             </div>
         </div>
 
@@ -165,10 +172,9 @@
             <div class="col s12">
                 <h4>Extension Functions</h4>
 
-                <div class="card function-doc hoverable"
-                     th:each="documentedFunction : ${extensionFunctions}">
+                <th:block th:each="documentedFunction : ${extensionFunctions}">
                     <div th:replace="~{templates/fragments/function_card :: functionCard(${documentedFunction})}"></div>
-                </div>
+                </th:block>
             </div>
         </div>
     </div>
@@ -179,6 +185,7 @@
 <!-- Materialize JS (for any interactive components) -->
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>-->
 <script src="https://cdn.jsdelivr.net/npm/flexsearch@0.7.31/dist/flexsearch.bundle.min.js"></script>
+<script src="/scripts/theme.js"></script>
 <script src="/scripts/search.js"></script>
 
 <script th:inline="javascript">

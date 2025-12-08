@@ -81,6 +81,23 @@ public class DocGenerator {
                 });
     }
 
+    public void regenerateAllCachedDocs() throws IOException {
+        initializeDirectory();
+
+        try (var fileList = Files.list(cachePath)) {
+            fileList.filter(file -> file.getFileName().toString().endsWith(".cache"))
+                    .forEach(libraryCache -> {
+                        var libraryName = libraryCache.getFileName().toString().replace(".cache", "");
+
+                        try {
+                            reprocessCachedLibrary(libraryName, outputPath, cachePath);
+                        } catch (IOException e) {
+                            LOGGER.error("Failed to regenerate cached library: {}", libraryCache, e);
+                        }
+                    });
+        }
+    }
+
     /**
      * Ensure directory is initialized and exists. This copies static global files to ensure it up to date.
      */
@@ -90,6 +107,7 @@ public class DocGenerator {
         
         copyResourceToDisk("/static/style.css", outputPath.resolve("style.css"));
         copyResourceToDisk("/static/scripts/search.js", scriptsPath.resolve("search.js"));
+        copyResourceToDisk("/static/scripts/theme.js", scriptsPath.resolve("theme.js"));
     }
 
     public static void copyResourceToDisk(String resourcePath, Path targetPath) throws IOException {
@@ -121,6 +139,10 @@ public class DocGenerator {
         docParser.createSearchIndex();
 
         return docParser.getOnExtensionDocs();
+    }
+
+    private static void reprocessCachedLibrary(String libraryName, Path outputPath, Path cachePath) throws IOException {
+        processCachedLibrary(libraryName, outputPath, cachePath, List.of());
     }
 
     private static void processCachedLibrary(String libraryName, Path outputPath, Path cachePath, List<DocumentedItem> onExtensionsDocs) throws IOException {
