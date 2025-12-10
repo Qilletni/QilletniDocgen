@@ -135,6 +135,7 @@ public class DocParser {
         var context = new Context();
         context.setVariable("libraryName", libraryName);
         context.setVariable("library", basicQllData);
+        context.setVariable("searchIndexPath", relativeIndexPath);
 
         var fileList = documentedFiles.stream().map(DocumentedFile::importPath).toList();
 
