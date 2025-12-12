@@ -274,6 +274,7 @@ public class DocParser {
             context.setVariable("library", basicQllData);
             context.setVariable("fileName", documentedFile.fileName());
             context.setVariable("filePath", documentedFile.importPath().toString().replace("\\", "/"));
+            context.setVariable("searchIndexPath", relativeIndexPath);
             context.setVariable("descriptionFormatter", descriptionFormatter);
             
             context.setVariable("fields", documentedFields);
