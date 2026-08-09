@@ -11,13 +11,31 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.vanniktech.maven.publish' version '0.35.0'
+    id 'me.champeau.gradle.japicmp' version '0.4.6'
+    id 'org.cyclonedx.bom' version '3.2.4'
 }
 
 group = 'dev.qilletni.docgen'
-version = '1.0.0'
+version = qilletniDocgenVersion
+
+// Locks the resolved dependency graph for the configurations used to build
+// and publish the release artifact, so a published version is always built
+// from an exact, checked-in set of resolved coordinates (gradle.lockfile).
+// Regenerate with `./gradlew dependencies --write-locks` after a dependency
+// change.
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+// `mavenLocal()` is excluded from default release/CI dependency resolution.
+// Enable with `-PuseMavenLocal=true`.
+def useMavenLocal = providers.gradleProperty('useMavenLocal').getOrElse('false').toBoolean()
 
 repositories {
-    mavenLocal()
+    if (useMavenLocal) {
+        mavenLocal()
+    }
+
     mavenCentral()
 
     maven {
@@ -33,8 +51,8 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
-    compileOnly 'dev.qilletni.impl:qilletni:1.0.0'
-    compileOnly 'dev.qilletni.api:qilletni-api:1.0.0'
+    compileOnly "dev.qilletni.impl:qilletni:${qilletniCoreVersion}"
+    compileOnly "dev.qilletni.api:qilletni-api:${qilletniCoreVersion}"
 
     // For markdown parsing
     implementation 'com.vladsch.flexmark:flexmark-all:0.64.8'
@@ -81,6 +99,62 @@ mavenPublishing {
             url = "https://github.com/Qilletni/QilletniDocgen"
             connection = "scm:git:git://github.com/Qilletni/QilletniDocgen.git"
             developerConnection = "scm:git:ssh://git@github.com/Qilletni/QilletniDocgen.git"
+        }
+    }
+}
+
+// CycloneDX JSON SBOM, attached as a release asset by the publish workflow.
+// Output: build/reports/cyclonedx-direct/bom.json
+cyclonedxDirectBom {
+    includeConfigs = ['runtimeClasspath']
+}
+
+// Public API compatibility check for `dev.qilletni.docgen:qilletni-docgen`, enforced
+// against the policy in `tools/release/release/japicmp_policy.py` (see
+// `.qilletni/release.yml`, in `Qilletni/Qilletni`). `-PjapicmpBaselineJar=/path/to/old.jar`
+// points at the previously published baseline jar (downloaded and hash-verified
+// beforehand, see `RELEASE.md`); the task is skipped if it is not supplied (e.g. for
+// the first release).
+import me.champeau.gradle.japicmp.JapicmpTask
+
+def japicmpBaselineJar = findProperty('japicmpBaselineJar')
+
+tasks.register('japicmpCheck', JapicmpTask) {
+    description = 'Compares the current public API against the published baseline jar'
+    onlyIf { japicmpBaselineJar != null }
+    if (japicmpBaselineJar != null) {
+        oldClasspath.from(files(japicmpBaselineJar))
+    }
+    newClasspath.from(tasks.named('jar').map { it.outputs.files })
+    dependsOn tasks.named('jar')
+    accessModifier = 'public'
+    onlyBinaryIncompatibleModified = false
+    failOnModification = false
+    ignoreMissingClasses = true
+    xmlOutputFile = file("${buildDir}/reports/japicmp/qilletni-docgen.xml")
+}
+
+// Guards a stable release publication from ever resolving a SNAPSHOT or
+// dynamic-version dependency, run by release.yml before publishing a tag.
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+
+tasks.register('checkNoSnapshotDependencies') {
+    description = 'Fails if the resolved runtime/compile classpath contains a SNAPSHOT or dynamic external dependency version'
+    doLast {
+        def offenders = []
+        ['runtimeClasspath', 'compileClasspath'].each { configName ->
+            configurations.getByName(configName).incoming.resolutionResult.allComponents.each { component ->
+                def id = component.id
+                if (id instanceof ModuleComponentIdentifier) {
+                    def version = id.version
+                    if (version.contains('SNAPSHOT') || version.contains('+') || version.startsWith('latest.')) {
+                        offenders << "${configName}: ${id.group}:${id.module}:${version}".toString()
+                    }
+                }
+            }
+        }
+        if (offenders) {
+            throw new GradleException("A stable release must not resolve SNAPSHOT/dynamic dependencies:\n" + offenders.join('\n'))
         }
     }
 }

@@ -1,0 +1,39 @@
+# Release configuration for this repository, consumed by
+# `Qilletni/Qilletni`'s `tools/release/release/release_config.py` and the
+# reusable release workflows it exposes. See
+# `Qilletni/Qilletni`'s `tools/release/README.md` for the full schema/CLI
+# contract, and the root `RELEASE.md` for the cross-repository release
+# protocol.
+schema_version: 1
+repository: Qilletni/QilletniDocgen
+
+components:
+  - name: qilletni-docgen
+    kind: maven
+    version_file: gradle.properties
+    version_key: qilletniDocgenVersion
+    changelog: CHANGELOG.md
+    registry_component: qilletni-docgen
+    artifacts:
+      - maven:
+          group: dev.qilletni.docgen
+          artifact: qilletni-docgen
+        japicmp:
+          enabled: true
+          report: build/reports/japicmp/qilletni-docgen.xml
+
+# japicmp policy (applied above, since `japicmp.enabled: true`):
+#   patch — reject any API change (additive or breaking)
+#   minor — reject breaking changes only; additive changes are allowed
+#   major — breaking changes are allowed only when `docs/migrations/X.Y.Z.md` exists
+
+# This repository consumes the `qilletni-core` release unit (core+API,
+# always released together at the same version) from Qilletni/Qilletni.
+dependencies:
+  - upstream_component: qilletni-core
+    repository: Qilletni/Qilletni
+    coordinates:
+      - dev.qilletni.impl:qilletni
+      - dev.qilletni.api:qilletni-api
+    version_file: gradle.properties
+    version_key: qilletniCoreVersion
