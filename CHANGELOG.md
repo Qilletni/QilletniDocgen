@@ -9,11 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Automated release tooling: centralized `qilletniDocgenVersion`/`qilletniCoreVersion` in
-  `gradle.properties`, `.qilletni/release.yml`, japicmp public-API compatibility gate,
-  CycloneDX SBOM generation, dependency locking, and marker-based tag/publish/dispatch
-  automation shared with `Qilletni/Qilletni`. See that repository's `RELEASE.md` for the
-  updated release process.
+- Added automatic release tooling
 
 ## [1.0.0] - 2025-11-01
 

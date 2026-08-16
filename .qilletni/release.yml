@@ -1,5 +1,5 @@
 # Release configuration for this repository, consumed by
-# `Qilletni/Qilletni`'s `tools/release/release/release_config.py` and the
+# `Qilletni/Qilletni`'s `tools/release/release/release_config.ts` and the
 # reusable release workflows it exposes. See
 # `Qilletni/Qilletni`'s `tools/release/README.md` for the full schema/CLI
 # contract, and the root `RELEASE.md` for the cross-repository release
