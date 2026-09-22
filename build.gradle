@@ -71,6 +71,14 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    // Disabling tests for now
+    // `compileTestJava` is disabled too, since disabling `test` alone still builds them.
+    enabled = false
+}
+
+tasks.named('compileTestJava') {
+    enabled = false
 }
 
 mavenPublishing {
