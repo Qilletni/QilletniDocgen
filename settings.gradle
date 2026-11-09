@@ -4,6 +4,21 @@ plugins {
 
 rootProject.name = 'qilletni-docgen'
 
+// Opt-in composite build against ../Qilletni (-PincludeSiblingBuilds=true).
+def includeSiblingBuilds = providers.gradleProperty('includeSiblingBuilds').getOrElse('false').toBoolean()
+
+if (includeSiblingBuilds) {
+    def coreDir = file('../Qilletni')
+    if (coreDir.exists()) {
+        includeBuild(coreDir) {
+            dependencySubstitution {
+                substitute module('dev.qilletni.impl:qilletni') using project(':')
+                substitute module('dev.qilletni.api:qilletni-api') using project(':qilletni-api')
+            }
+        }
+    }
+}
+
 develocity {
     buildScan {
         termsOfUseUrl = "https://gradle.com/terms-of-service"
