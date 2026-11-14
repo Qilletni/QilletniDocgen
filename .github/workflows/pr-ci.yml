@@ -13,6 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - id: link
+        uses: Qilletni/Qilletni/.github/actions/link-upstreams@master
+        with:
+          upstreams: Qilletni
+
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -27,18 +32,21 @@ jobs:
       # gradle.lockfile, so a lock-file update is always an explicit,
       # reviewable part of a PR's diff.
       - name: Build and test
-        run: ./gradlew clean build
+        run: ./gradlew clean build -PincludeSiblingBuilds=${{ steps.link.outputs.found }}
 
       - name: Guard against SNAPSHOT/dynamic dependencies
-        run: ./gradlew checkNoSnapshotDependencies
+        if: steps.link.outputs.found != 'true'
+        run: ./gradlew checkNoSnapshotDependencies -PincludeSiblingBuilds=false
 
       - name: Generate CycloneDX SBOM
+        if: steps.link.outputs.found != 'true'
         run: ./gradlew cyclonedxDirectBom
 
       # PR builds have no signing secrets, and signing is required for a stable
       # version (e.g. a release PR). Signing is still enforced by the release
       # publish, which keeps `signAllPublications=true`.
       - name: Verify publishToMavenLocal works
+        if: steps.link.outputs.found != 'true'
         run: ./gradlew publishToMavenLocal -PsignAllPublications=false
 
   validate-release-config:
@@ -76,10 +84,3 @@ jobs:
         uses: reviewdog/action-actionlint@v1
         with:
           fail_level: error
-
-  # Informational: builds against same-named upstream branches via the composite build.
-  linked-build:
-    if: github.event_name == 'pull_request'
-    uses: Qilletni/Qilletni/.github/workflows/reusable-linked-build.yml@master
-    with:
-      upstreams: Qilletni

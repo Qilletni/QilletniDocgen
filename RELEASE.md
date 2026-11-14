@@ -108,8 +108,10 @@ The `Dependency Update` workflow refreshes the lockfile automatically.
 - `-PincludeSiblingBuilds=true` builds against the sibling checkout `../Qilletni`.
 - `-PuseMavenLocal=true` builds against artifacts in the local Maven repository.
 
-Both flags are `false` by default. The release workflows and the `pr-ci.yml` workflow
-build against the published Maven coordinates.
+Both flags are `false` by default. The release workflows always use published Maven
+coordinates. In `pr-ci.yml`, pull requests eligible for linking build against a
+same-named Qilletni branch when it exists; the snapshot, SBOM and Maven-local publish
+checks then run only when no upstream branch is linked.
 
 `checkNoSnapshotDependencies` stops only on a stable version. On a `-SNAPSHOT` version, it
 does nothing, so `master` can use a `-SNAPSHOT` version of an upstream component. Use
