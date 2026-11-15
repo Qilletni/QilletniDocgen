@@ -92,9 +92,11 @@ jobs:
             exit 0
           fi
 
-          echo "is_release_merge=true" >> "$GITHUB_OUTPUT"
-          echo "version=$ROOT_VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$ROOT_VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "is_release_merge=true"
+            echo "version=$ROOT_VERSION"
+            echo "tag=v$ROOT_VERSION"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Validate the release marker
         if: steps.detect.outputs.is_release_merge == 'true'
@@ -262,7 +264,7 @@ jobs:
             exit 1
           fi
 
-          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "version=$TAG_VERSION" >> "$GITHUB_OUTPUT"
           echo "Confirmed Release: $TAG_VERSION"
 
       - name: Ensure the resolved dependency graph has no SNAPSHOT/dynamic versions
