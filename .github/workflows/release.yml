@@ -160,7 +160,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '22'
+          java-version: '27'
           distribution: 'temurin'
           cache: 'gradle'
 
@@ -208,7 +208,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: '22'
+          java-version: '27'
           distribution: 'temurin'
           cache: 'gradle'
 
